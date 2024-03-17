@@ -18,6 +18,7 @@ class UserRegister(APIView):
 				return Response(serializer.data, status=status.HTTP_201_CREATED)
 		return Response(status=status.HTTP_400_BAD_REQUEST)
 
+
 class UserLogin(APIView):
 	permission_classes = (permissions.AllowAny,)
 	authentication_classes = (SessionAuthentication,)
@@ -30,10 +31,8 @@ class UserLogin(APIView):
 		if serializer.is_valid(raise_exception=True):
 			user = serializer.check_user(data)
 			login(request, user)
-			# Set a cookie upon successful login
-			response = Response(serializer.data, status=status.HTTP_200_OK)
-			response.set_cookie('my_cookie', 'cookie_value', max_age=3600, secure=True, httponly=True, samesite='Strict')
-			return response
+			return Response(serializer.data, status=status.HTTP_200_OK)
+
 
 class UserLogout(APIView):
 	permission_classes = (permissions.AllowAny,)
@@ -41,10 +40,12 @@ class UserLogout(APIView):
 	def post(self, request):
 		logout(request)
 		return Response(status=status.HTTP_200_OK)
-	
+
+
 class UserView(APIView):
 	permission_classes = (permissions.IsAuthenticated,)
 	authentication_classes = (SessionAuthentication,)
+	##
 	def get(self, request):
 		serializer = UserSerializer(request.user)
 		return Response({'user': serializer.data}, status=status.HTTP_200_OK)
