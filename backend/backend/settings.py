@@ -33,7 +33,20 @@ CORS_ALLOWED_ORIGINS = [
     'http://0.0.0.0',
 ]
 
+CSRF_TRUSTED_ORIGINS = ['http://localhost:3000',
+                        'https://localhost:3000',
+                        'http://127.0.0.1:3000',
+                        'https://127.0.0.1:3000',
+                        'http://0.0.0.0'
+                        ]
+
 CORS_ALLOW_CREDENTIALS = True
+SRF_COOKIE_SECURE = False
+CSRF_COOKIE_HTTPONLY = False
+
+# PRODUCTION ONLY
+# CSRF_COOKIE_SECURE = True
+# SESSION_COOKIE_SECURE = True
 
 # Application definition
 
@@ -92,7 +105,7 @@ DATABASES = {
     }
 }
 
-## User model
+# User model
 AUTH_USER_MODEL = 'user_api.AppUser'
 
 REST_FRAMEWORK = {
