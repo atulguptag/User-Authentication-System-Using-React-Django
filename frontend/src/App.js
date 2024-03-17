@@ -6,14 +6,20 @@ import Container from 'react-bootstrap/Container';
 import Navbar from 'react-bootstrap/Navbar';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
-
+import Cookies from 'js-cookie';
 
 axios.defaults.xsrfCookieName = 'csrftoken';
 axios.defaults.xsrfHeaderName = 'X-CSRFToken';
 axios.defaults.withCredentials = true;  
 
 const client = axios.create({
-  baseURL: "http://127.0.0.1:8000"
+  baseURL: "http://127.0.0.1:8000",
+  withCredentials: true, 
+  headers: {
+    Accept: "application/json",
+      "Content-Type": "application/json",
+      "X-CSRFToken": Cookies.get('csrftoken')
+  },
 });
 
 function App() {
