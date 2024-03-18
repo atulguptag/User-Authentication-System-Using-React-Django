@@ -4,9 +4,12 @@ from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 
 # Create your models here.
 class AppUserManager(BaseUserManager):
-	def create_user(self, email, password=None):
+	def create_user(self, email, username, password=None):
 		if not email:
 			raise ValueError('An email is required.')
+		##
+		if not username:
+			raise ValueError("An username is required.")
 		##
 		if not password:
 			raise ValueError('A password is required.')
@@ -17,16 +20,19 @@ class AppUserManager(BaseUserManager):
 		user.save()
 		return user
 	
-	def create_superuser(self, email, password=None):
+	def create_superuser(self, email, username, password=None):
 		if not email:
 			raise ValueError('An email is required.')
+		##
+		if not username:
+			raise ValueError("An username is required.")
 		##
 		if not password:
 			raise ValueError('A password is required.')
 		
-		user = self.create_user(email, password)
+		user = self.create_user(email, username, password)
 		user.is_superuser = True
-		user.save()
+		user.save(using = self._db)
 		return user
 
 class AppUser(AbstractBaseUser, PermissionsMixin):
@@ -37,4 +43,4 @@ class AppUser(AbstractBaseUser, PermissionsMixin):
 	REQUIRED_FIELDS = ['username']
 	objects = AppUserManager()
 	def __str__(self):
-		return self.username
+		return self.email
