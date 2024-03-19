@@ -95,6 +95,15 @@ function App() {
     ).then(function (res) {
       setCurrentUser(true);
       localStorage.setItem('user', JSON.stringify({ username })); // Store user data
+    })
+    .catch(function (error) {
+    // Handle error and display message
+    if (error.response && error.response.data) {
+      const errorMessage = error.response.data.error || "The email and password you entered did not match with our records. Please try again.";
+      alert(errorMessage); // Display error message using alert
+    } else {
+      alert("An error occurred. Please try again."); // Display generic error message
+    }
     });
   }
 
