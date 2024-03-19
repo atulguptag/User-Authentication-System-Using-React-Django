@@ -10,23 +10,21 @@ import Cookies from 'js-cookie';
 
 axios.defaults.xsrfCookieName = 'csrftoken';
 axios.defaults.xsrfHeaderName = 'X-CSRFToken';
-axios.defaults.withCredentials = true;  
+axios.defaults.withCredentials = true;
 
 const client = axios.create({
   baseURL: "http://127.0.0.1:8000",
-  withCredentials: true, 
+  withCredentials: true,
   headers: {
     Accept: "application/json",
-      "Content-Type": "application/json",
-      "X-CSRFToken": Cookies.get('csrftoken')
+    "Content-Type": "application/json",
   },
 });
 
 function App() {
-
   const [currentUser, setCurrentUser] = useState(() => {
-    // Initialize currentUser from localStorage or null if not found
-    const storedUser = localStorage.getItem('currentUser');
+    // Initialize from localStorage or null
+    const storedUser = localStorage.getItem('user');
     return storedUser ? JSON.parse(storedUser) : null;
   });
   const [registrationToggle, setRegistrationToggle] = useState(false);
@@ -35,13 +33,22 @@ function App() {
   const [password, setPassword] = useState('');
 
   useEffect(() => {
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      setCurrentUser(JSON.parse(storedUser));
+      // Update CSRF token from cookies on refresh
+      const csrftoken = Cookies.get('csrftoken');
+      if (csrftoken) {
+        client.defaults.headers.common['X-CSRFToken'] = csrftoken;
+      }
+    }
     client.get("/api/user")
-    .then(function(res) {
-      setCurrentUser(true);
-    })
-    .catch(function(error) {
-      setCurrentUser(false);
-    });
+      .then(function (res) {
+        setCurrentUser(true);
+      })
+      .catch(function (error) {
+        // ...
+      });
   }, []);
 
   function update_form_btn() {
@@ -59,19 +66,20 @@ function App() {
     client.post(
       "/api/register",
       {
-        email: email,
-        username: username,
-        password: password
+        email,
+        username,
+        password
       }
-    ).then(function(res) {
+    ).then(function (res) {
       client.post(
         "/api/login",
         {
-          email: email,
-          password: password
+          email,
+          password
         }
-      ).then(function(res) {
+      ).then(function (res) {
         setCurrentUser(true);
+        localStorage.setItem('user', JSON.stringify({ username })); // Store user data
       });
     });
   }
@@ -81,11 +89,12 @@ function App() {
     client.post(
       "/api/login",
       {
-        email: email,
-        password: password
+        email,
+        password
       }
-    ).then(function(res) {
+    ).then(function (res) {
       setCurrentUser(true);
+      localStorage.setItem('user', JSON.stringify({ username })); // Store user data
     });
   }
 
@@ -93,9 +102,10 @@ function App() {
     e.preventDefault();
     client.post(
       "/api/logout",
-      {withCredentials: true}
-    ).then(function(res) {
+      { withCredentials: true }
+    ).then(function (res) {
       setCurrentUser(false);
+      localStorage.removeItem('user');
     });
   }
 
@@ -115,20 +125,20 @@ function App() {
             </Navbar.Collapse>
           </Container>
         </Navbar>
-          <div className="center">
-            <h2>You're logged in!</h2>
-          </div>
+        <div className="center">
+          <h2>You're logged in!</h2>
         </div>
+      </div>
     );
   }
   return (
     <div>
-    <Navbar bg="dark" variant="dark">
-      <Container>
-        <Navbar.Brand>Authentication App</Navbar.Brand>
-        <Navbar.Toggle />
-        <Navbar.Collapse className="justify-content-end">
-          <Navbar.Text>
+      <Navbar bg="dark" variant="dark">
+        <Container>
+          <Navbar.Brand>Authentication App</Navbar.Brand>
+          <Navbar.Toggle />
+          <Navbar.Collapse className="justify-content-end">
+            <Navbar.Text>
             <Button id="form_btn" onClick={update_form_btn} variant="light">Register</Button>
           </Navbar.Text>
         </Navbar.Collapse>
