@@ -13,7 +13,7 @@ axios.defaults.xsrfHeaderName = "X-CSRFToken";
 axios.defaults.withCredentials = true;
 
 const client = axios.create({
-  baseURL: "https://atul-backend-api.easify.xyz",
+  baseURL: "https://a.dj.api.easify.xyz/",
   withCredentials: true,
   headers: {
     Accept: "application/json",
