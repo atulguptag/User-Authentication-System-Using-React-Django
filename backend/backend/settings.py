@@ -31,12 +31,16 @@ CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000',
     'http://127.0.0.1',
     'http://0.0.0.0',
+    'https://a.dj.api.easify.xyz',
+    'http://a.dj.api.easify.xyz',
+    'https://user-auth-using-react-django.netlify.app',
 ]
 
 CSRF_TRUSTED_ORIGINS = ['http://localhost:3000',
                         'https://localhost:3000',
                         'http://127.0.0.1:3000',
                         'https://127.0.0.1:3000',
+                        'https://user-auth-using-react-django.netlify.app',
                         'http://0.0.0.0'
                         ]
 
